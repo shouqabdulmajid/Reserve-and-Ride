@@ -1,0 +1,29 @@
+useCaseDiagram
+    actor "Passenger" as P
+    actor "Employee" as E
+    
+    package "Reserve & Ride App (Implemented)" {
+        usecase "Login / Register" as UC1
+        usecase "Upload Priority Card" as UC2
+        
+        usecase "Book Ticket" as UC3
+        usecase "Select Route, Time & Category (VIP/Family)" as UC4
+        usecase "View Ticket (QR Code)" as UC5
+        
+        usecase "View Real-Time Seat Map" as UC6
+        usecase "Manage Reservations (Modify/Cancel)" as UC7
+        usecase "Book for Passenger (via ID)" as UC8
+    }
+
+    P --> UC1
+    P --> UC2
+    P --> UC3
+    UC3 ..> UC4 : <<include>>
+    P --> UC5
+
+    E --> UC1
+    E --> UC6
+    E --> UC7
+    E --> UC8
+    UC8 ..> UC4 : <<include>>
+    
