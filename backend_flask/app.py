@@ -8,10 +8,8 @@ import datetime
 import logging
 import time
 
-# تهيئة التسجيل
 logging.basicConfig(level=logging.INFO)
 
-# يجب التأكد من وجود ملف db_config.py الذي يوفر دالة get_connection
 try:
     from db_config import get_connection
 except ImportError:
@@ -22,17 +20,16 @@ except ImportError:
     exit(1)
 
 
-# إعداد تطبيق Flask
+
 app = Flask(__name__)
 CORS(app)
 
-# إعداد مجلد تحميل الصور
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# وظيفة مساعدة لاختبار الاتصال بقاعدة البيانات عند بدء التشغيل
+
 def check_db_connection():
     """التحقق من اتصال قاعدة البيانات عند بدء تشغيل الخادم."""
     try:
@@ -46,9 +43,7 @@ def check_db_connection():
         print(f"❌ فشل الاتصال بقاعدة البيانات عند بدء التشغيل: {e}")
         return False
 
-# -------------------------------------------------------------
-# نقطة نهاية لتسجيل دخول الركاب (Passenger Login)
-# -------------------------------------------------------------
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -95,9 +90,7 @@ def login():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# نقطة نهاية لتسجيل الركاب الجدد (Passenger Registration)
-# -------------------------------------------------------------
+
 @app.route("/register", methods=["POST"])
 def register():
     data = request.form
@@ -161,9 +154,7 @@ def register():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# نقطة نهاية لتسجيل الموظفين الجدد (Employee Registration)
-# -------------------------------------------------------------
+
 @app.route("/employee_register", methods=["POST"])
 def employee_register():
     data = request.get_json()
@@ -213,9 +204,7 @@ def employee_register():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# نقطة نهاية لتسجيل دخول الموظفين (Employee Login)
-# -------------------------------------------------------------
+
 @app.route("/employee_login", methods=["POST"])
 def employee_login():
     data = request.get_json()
@@ -269,9 +258,7 @@ def employee_login():
         cursor.close()
         conn.close()
         
-# -------------------------------------------------------------
-# نقطة نهاية لجلب اسم الراكب باستخدام الهوية
-# -------------------------------------------------------------
+
 @app.route("/passenger/name_by_id/<passenger_id>", methods=["GET"])
 def get_passenger_name_by_id(passenger_id):
     conn = get_connection()
@@ -297,9 +284,7 @@ def get_passenger_name_by_id(passenger_id):
         conn.close()
 
 
-# -------------------------------------------------------------
-# نقطة نهاية لجلب الحجوزات الفعالة للموظف ولصفحة التعديل
-# -------------------------------------------------------------
+
 @app.route("/bookings/active/<passenger_id>", methods=["GET"])
 def get_active_bookings_for_employee(passenger_id):
     conn = get_connection()
@@ -371,9 +356,7 @@ def cancel_booking(booking_id):
         cursor.close()
         conn.close()
         
-# -------------------------------------------------------------
-# نقطة نهاية لتحديث حجز معين (للموظف)
-# -------------------------------------------------------------
+
 @app.route("/booking/update/<booking_id>", methods=["POST"])
 def update_booking(booking_id):
     data = request.get_json()
@@ -432,9 +415,7 @@ def update_booking(booking_id):
         cursor.close()
         conn.close()
         
-# -------------------------------------------------------------
-# نقطة نهاية لجلب الأوقات (تدعم جلب اليوم كاملاً)
-# -------------------------------------------------------------
+
 @app.route("/times", methods=["GET"])
 def get_times():
     now = datetime.datetime.now()
@@ -468,9 +449,7 @@ def get_times():
 
     return jsonify(valid_times)
 
-# -------------------------------------------------------------
-# نقطة نهاية لجلب المقاعد المحجوزة في وقت معين
-# -------------------------------------------------------------
+
 @app.route("/booked_seats", methods=["POST"])
 def booked_seats():
     data = request.get_json()
@@ -495,10 +474,7 @@ def booked_seats():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# 🛑 نقطة نهاية لجلب حالة المقاعد مع فلترة النوع (مصدر المشكلة سابقاً)
-# تم إصلاحها وتوحيد الفئات
-# -------------------------------------------------------------
+
 @app.route("/booked_seats/status", methods=["POST"])
 def booked_seats_status():
     data = request.get_json()
@@ -554,9 +530,7 @@ def booked_seats_status():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# 🛑 نقطة نهاية لحجز تذكرة (تم إصلاح Indentation وتوحيد الفئات)
-# -------------------------------------------------------------
+
 @app.route("/book", methods=["POST"])
 def book():
     data = request.get_json()
@@ -612,9 +586,7 @@ def book():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# نقطة نهاية الدفع
-# -------------------------------------------------------------
+
 @app.route("/pay", methods=["POST"])
 def pay():
     data = request.get_json()
@@ -626,9 +598,7 @@ def pay():
     return jsonify({"success": True, "message": "تم الدفع (افتراضياً عند الحجز)"})
 
 
-# -------------------------------------------------------------
-# دالة استرجاع الحجوزات الفعالة للراكب
-# -------------------------------------------------------------
+
 @app.route("/active_bookings", methods=["GET"])
 def get_active_bookings():
     passenger_name = request.args.get('passenger_name')
@@ -668,9 +638,7 @@ def get_active_bookings():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# دالة استرجاع الحجوزات المنتهية للراكب
-# -------------------------------------------------------------
+
 @app.route("/completed_bookings", methods=["GET"])
 def get_completed_bookings():
     passenger_name = request.args.get('passenger_name')
@@ -708,9 +676,7 @@ def get_completed_bookings():
         cursor.close()
         conn.close()
 
-# -------------------------------------------------------------
-# نقطة نهاية للتحقق من صلاحية التذكرة من قبل الموظف
-# -------------------------------------------------------------
+
 @app.route("/verify_ticket", methods=["POST"])
 def verify_ticket():
     data = request.get_json()
